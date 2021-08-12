@@ -1,0 +1,100 @@
+git clone https://github.com/AjaySingala/P1-MovieLens
+
+unzip all datasets
+
+remove headers from the all datasets
+
+copy all datasets from local to hdfs
+	hdfs dfs -put <filename> <hdfs-path>
+	
+Hive:
+	create table movies(movieid int, title string, genres string)
+	row format delimited
+	fields terminated by ',';
+	
+	load data inpath '/p1/movies.csv'
+	into table p1.movies;
+	
+	create table ratings(userid int, movieid int, rating float, timesta string)
+	row format delimited
+	fields terminated by ',';
+	
+	load data inpath '/p1/ratings.csv'
+	into table p1.ratings;
+	
+	create table tags(userid int, movieid int, tags string, timesta string)
+	row format delimited
+	fields terminated by ',';
+	
+	load data inpath '/p1/tags.csv'
+	into table p1.tags;
+
+01. first 5 entries from movies table
+SELECT * FROM movies LIMIT 5;
+
+02. number of unique movies
+SELECT COUNT(DISTINCT title) FROM movies;
+
+03. summary of ratings data
+select max(rating) as maximum_rating, min(rating) as minimum_rating, avg(rating) as average_rating, count(distinct movieid) as number_of_movies, count(distinct userid) as total_users from ratings;
+
+04. minimum rating given to a movie
+select m.title, min(r.rating) from movies m inner join ratings r on m.movieid = r.movieid group by r.movieid;
+
+05. maximum rating given to a movie
+select m.title, max(r.rating) from movies m inner join ratings r on m.movieid = r.movieid group by r.movieid;
+
+06. is any row null in tags
+SELECT * FROM tags WHERE userId is NULL and movieId is NULL and tag is NULL and timesta is NULL;
+
+07. number of unique tags 
+SELECT COUNT(DISTINCT tag) FROM tags;
+
+08. drop null rows from tags and create another table of the resulting rows
+create table new_tags as select * from tags where userid is not  null and movieid is not null, tag is not null, timesta is not null;
+
+09. filtering to get the list of drama movies
+select * from movies where genres = regexp_extract(genres, '(.*)Drama(.*)', 0);
+
+10. total number of drama movies
+select count(*) from movies where genres = regexp_extract(genres, '(.*)Drama(.*)', 0);
+
+11. filtering to get the list of comedy movies
+select * from movies where genres = regexp_extract(genres, '(.*)Comedy(.*)', 0);
+
+12. total no. of comedy movies
+select count(*) from movies where genres = regexp_extract(genres, '(.*)Comedy(.*)', 0);
+
+13. search movie id by tag search
+select movieid from tags where tag='Mark Waters' limit 10;
+
+14. displays first 5 data from ratings table
+select * from ratings limit 5;
+
+15. merging two tables movies and ratings into a new table without the "timestamp" column from the ratings table.
+create table movie_rating as select m.movieid, m.title, m.genres, r.userid, r.rating from movies as m full outer join ratings as r on m.movieid = r.movieid;
+
+16. display high rated movies (rating > 4)
+select title, avg(rating) as avg_rating from movie_rating group by title having avg_rating > 4;
+
+17. display low rated movies (rating < 4)
+select title, avg(rating) as avg_rating from movie_rating group by title having avg_rating < 4;
+
+18. total number of unique movie genres
+select count(distinct genres) from movies;
+
+19. top 25 most rated movies
+select title, count(rating) as most_rating from movie_rating group by title order by most_rating desc limit 25;
+
+20. slicing out columns to display only title and genres columns from movies table
+select title, genres from movies;
+
+21. extract year from title of the movie
+select title, regexp_extract(title, '//([0-9]{4}//)', 1) from movies;
+
+22. count how many times each of genres occur
+select genres, count(genres) from movies group by genres order by count(genres) desc;
+
+23. Which movie received the highest number of ratings?
+select m.title, count(r.rating) from movies m inner join rating r on m.movieid = r.movieid group by m.title order by count(r.rating) desc limit 1;
+
