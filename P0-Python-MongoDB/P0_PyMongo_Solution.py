@@ -10,7 +10,7 @@ collection = db.data
 print(db.list_collection_names())
 
 # 1. Write a MongoDB query to display all the documents in the collection restaurants.
-# for i in collection.find():
+# for i in collection.find().limit(5):
 #     pprint.pprint(i)
 
 # 2. Write a MongoDB query to display the fields restaurant_id, name, borough and cuisine for all the documents in the collection restaurant.
@@ -90,8 +90,8 @@ print(db.list_collection_names())
 #     pprint.pprint(i)
 
 # 21. Write a MongoDB query to find the restaurant Id, name, borough and cuisine for those restaurants which prepared dish except 'American' and 'Chinese' or restaurant's name begins with letter 'Wil'.
-for i in collection.find({'$or': [{'cuisine': {'$nin': ['American ', 'Chinese']}}, {'name': {'$regex': '$Wil.*'}}]}, {'restaurant_id': 1, 'name': 1, 'borough': 1, 'cuisine': 1, '_id': 0}):
-    pprint.pprint(i)
+# for i in collection.find({'$or': [{'cuisine': {'$nin': ['American ', 'Chinese']}}, {'name': {'$regex': '$Wil.*'}}]}, {'restaurant_id': 1, 'name': 1, 'borough': 1, 'cuisine': 1, '_id': 0}):
+#     pprint.pprint(i)
 
 # 22. Write a MongoDB query to find the restaurant Id, name, and grades for those restaurants which achieved a grade of "A" and scored 11 on an ISODate "2014-08-11T00:00:00Z" among many of survey dates..
 # for i in collection.find({'grades': {'$elemMatch': {'date': parser.isoparse("2014-08-11T00:00:00Z"), 'score': 11, 'grade': 'A'}}}, {'restaurant_id': 1, 'name': 1, 'grades': 1, '_id': 0}):
