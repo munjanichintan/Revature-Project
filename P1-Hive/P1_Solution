@@ -51,7 +51,7 @@ select * from tags where userid is null and movieid is null and tag is null and 
 select count(distinct tag) from tags;
 
 08. drop null rows from tags and create another table of the resulting rows
-create table new_tags as select * from tags where userid is not  null and movieid is not null, tag is not null, timestamps is not null;
+create table new_tags as select * from tags where userid is not null and movieid is not null, tag is not null, timestamps is not null;
 
 09. filtering to get the list of drama movies
 select * from movies where genres = regexp_extract(genres, '(.*)Drama(.*)', 0);
